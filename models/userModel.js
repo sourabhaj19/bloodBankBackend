@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
-const User = db.define('User', {
+const User = db.define('users', {
     id: {
         type: DataTypes.BIGINT,
         autoIncrement: true,
@@ -10,6 +10,11 @@ const User = db.define('User', {
     name: {
         type: DataTypes.STRING,
         allowNull: false
+    },
+    username: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
     },
     phone: {
         type: DataTypes.STRING,
@@ -44,7 +49,11 @@ const User = db.define('User', {
         allowNull: true
     },
     role: {
-        type: DataTypes.ENUM('DONOR', 'SEEKER', 'BOTH'),
+        type: DataTypes.STRING,
+        primaryKey : true,
+        references :{
+            model : 'roles'
+        },
         allowNull: false
     },
     last_donation_date: {

@@ -1,19 +1,18 @@
-const swaggerAutogen = require("swagger-autogen");
+const swaggerAutogen = require("swagger-autogen")();
 
-const swaggerOptions = {
-  definition: {
-    openapi: '3.0.0',
-    info: {
-      title: 'Blood Bank API',
-      version: '1.0.0',
-      description: 'API documentation for Blood Bank application',
-    },
-    host : 'localhost:3002'
+const doc = {
+  info: {
+    title: "Blood Bank API",
+    description: "API documentation for Blood Bank application",
+    version: "1.0.0",
   },
-  apis: [`${__dirname}/routes/*.js`], // Corrected path to ensure Swagger reads route files
+  host: "localhost:3002",
+  schemes: ["http"],
 };
 
-const outputFile = './swagger-output.json '
-const routes = ['./routes/userRoute.js']; // Corrected path to ensure Swagger reads route files
+const outputFile = "./swagger-output.json";
+const routes = ["./routes/userRoute.js", "./routes/rolesRoute.js"]; // Add more routes as needed
 
-swaggerAutogen(outputFile, routes, swaggerOptions); // Corrected path to ensure Swagger reads route files
+swaggerAutogen(outputFile, routes, doc).then(() => {
+  console.log("✅ Swagger JSON generated successfully.");
+});

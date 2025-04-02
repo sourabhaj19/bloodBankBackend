@@ -1,11 +1,11 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "1.0.0",
-    "title": "REST API",
-    "description": ""
+    "title": "Blood Bank API",
+    "description": "API documentation for Blood Bank application",
+    "version": "1.0.0"
   },
-  "host": "localhost:3000",
+  "host": "localhost:3002",
   "basePath": "/",
   "schemes": [
     "http"
@@ -21,7 +21,7 @@
             "schema": {
               "type": "object",
               "properties": {
-                "email": {
+                "username": {
                   "example": "any"
                 },
                 "password": {
@@ -51,13 +51,37 @@
             "schema": {
               "type": "object",
               "properties": {
+                "name": {
+                  "example": "any"
+                },
                 "username": {
+                  "example": "any"
+                },
+                "phone": {
                   "example": "any"
                 },
                 "email": {
                   "example": "any"
                 },
                 "password": {
+                  "example": "any"
+                },
+                "bloodGroup": {
+                  "example": "any"
+                },
+                "location": {
+                  "example": "any"
+                },
+                "role": {
+                  "example": "any"
+                },
+                "latitude": {
+                  "example": "any"
+                },
+                "longitude": {
+                  "example": "any"
+                },
+                "isAvailable": {
                   "example": "any"
                 }
               }
@@ -73,36 +97,75 @@
           }
         }
       }
-    }
-  },
-  "definitions": {
-    "openapi": {
-      "type": "string",
-      "example": "3.0.0"
     },
-    "info": {
-      "type": "object",
-      "properties": {
-        "title": {
-          "type": "string",
-          "example": "Blood Bank API"
-        },
-        "version": {
-          "type": "string",
-          "example": "1.0.0"
-        },
-        "description": {
-          "type": "string",
-          "example": "API documentation for Blood Bank application"
+    "/search-blood": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          }
         }
       }
     },
-    "host": {
-      "type": "string",
-      "example": "localhost:3000"
+    "/roles": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/roles/{name}": {
+      "delete": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
     }
-  },
-  "apis": [
-    "C:\\Users\\sourabhJ\\Desktop\\Sourabh Jadhav\\projects\\bloodBank_Backend/routes/*.js"
-  ]
+  }
 }
