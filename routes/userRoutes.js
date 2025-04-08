@@ -1,11 +1,23 @@
-const express = require("express");
-const { assignRolesToUser } = require("../controllers/userController");
-// ...existing code...
+const router = require('express').Router();
+const {
+  registerUser,
+  loginUser,
+  getCurrentUser,
+  getAllUsers,
+  updateUser,
+  deleteUser,
+  changePassword,
+  resetPassword,
+} = require('../controllers/userController');
+const { protect } = require('../middleware/authMiddleware');
 
-const router = express.Router();
+router.post('/register', registerUser);
+router.post('/login', loginUser);
+router.get('/current', protect, getCurrentUser);
+router.get('/', protect, getAllUsers);
+router.put('/:id', protect, updateUser);
+router.delete('/:id', protect, deleteUser);
+router.put('/change-password', protect, changePassword);
+router.post('/reset-password', resetPassword);
 
-// Route to assign multiple roles to a user
-router.post("/assign-roles", assignRolesToUser);
-
-// ...existing code...
 module.exports = router;

@@ -1,29 +1,30 @@
-const dotenv  =  require('dotenv').config();
 const express = require('express');
+const cors = require('cors');
+const dotenv = require('dotenv').config();
 const db = require('./config/db');
-const userRoute = require('./routes/userRoute.js');
-const rolesRoute = require('./routes/rolesRoute.js');
-const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./swagger-output.json');
+const userRoutes = require('./routes/userRoutes');
+const roleRoutes = require('./routes/roleRoutes');
+
 const app = express();
-const cors = require('cors')
+
+// Middleware
 app.use(express.json());
 app.use(cors());
-// Middleware
-app.use("/api", rolesRoute);
-app.use("/api/user", userRoute);
 
-// Swagger configuration
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-// Database connection and sync
+
+// Routes
+app.use('/api/users', userRoutes);
+app.use('/api/roles', roleRoutes);
+
+// Database connection
 db.sync()
-  .then(() => console.log('Database & tables created!'))
+  .then(() => console.log('Database connected and tables synced!'))
   .catch(err => {
-    console.error('Unable to create tables, shutting down...', err);
+    console.error('Database connection failed:', err);
     process.exit(1);
   });
 
-const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+// Start server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
