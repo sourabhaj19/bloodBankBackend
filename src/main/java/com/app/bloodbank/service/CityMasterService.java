@@ -1,8 +1,10 @@
 package com.app.bloodbank.service;
 
 import com.app.bloodbank.criteria.CityMasterCriteria;
+import com.app.bloodbank.criteria.StateMasterCriteria;
 import com.app.bloodbank.dto.PagedResponse;
 import com.app.bloodbank.model.CityMaster;
+import com.app.bloodbank.model.StateMaster;
 import com.app.bloodbank.specifications.CityMasterQueryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,4 +21,5 @@ public class CityMasterService {
         Page<CityMaster> page = cityQueryService.findByCriteria(criteria, pageable);
         return new PagedResponse<>(page);
     }
+
 }

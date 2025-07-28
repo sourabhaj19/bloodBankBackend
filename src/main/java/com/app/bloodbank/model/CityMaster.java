@@ -29,8 +29,9 @@ public class CityMaster {
     @Column(nullable = false)
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "state_id", nullable = false)
+    @JsonIgnoreProperties("states")
     private StateMaster state;
 
     public CityMaster(String name, StateMaster state) {
@@ -38,18 +39,4 @@ public class CityMaster {
         this.state = state;
     }
 
-    // Helper method to get state name
-    public String getStateName() {
-        return state != null ? state.getName() : null;
-    }
-
-    // Helper method to get country name
-    public String getCountryName() {
-        return state != null && state.getCountry() != null ? state.getCountry().getName() : null;
-    }
-
-    // Helper method to get country code
-    public String getCountryCode() {
-        return state != null && state.getCountry() != null ? state.getCountry().getCode() : null;
-    }
 }

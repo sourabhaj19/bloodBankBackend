@@ -2,7 +2,7 @@ package com.app.bloodbank.controller;
 
 import com.app.bloodbank.criteria.StateMasterCriteria;
 import com.app.bloodbank.dto.PagedResponse;
-import com.app.bloodbank.dto.StateMasterDTO;
+import com.app.bloodbank.model.StateMaster;
 import com.app.bloodbank.service.StateMasterService;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
@@ -26,7 +26,7 @@ public class StateMasterController {
     }
 
     @GetMapping
-    public ResponseEntity<PagedResponse<StateMasterDTO>> getStates(
+    public ResponseEntity<PagedResponse<StateMaster>> getStates(
             @Parameter(description = "Filter criteria") @Valid StateMasterCriteria criteria,
             @Parameter(description = "Pagination parameters") @PageableDefault(size = 20) Pageable pageable){
         return ResponseEntity.ok().body(stateMasterService.getAllStates(criteria, pageable));

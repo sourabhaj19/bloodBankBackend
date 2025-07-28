@@ -1,8 +1,10 @@
 package com.app.bloodbank.controller;
 
 import com.app.bloodbank.criteria.CityMasterCriteria;
+import com.app.bloodbank.criteria.StateMasterCriteria;
 import com.app.bloodbank.dto.PagedResponse;
 import com.app.bloodbank.model.CityMaster;
+import com.app.bloodbank.model.StateMaster;
 import com.app.bloodbank.service.CityMasterService;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
@@ -26,10 +28,17 @@ public class CityMasterController {
         this.cityMasterService = cityMasterService ;
     }
 
-    @GetMapping()
+//    @GetMapping()
+//    public ResponseEntity<PagedResponse<CityMaster>> getCities(
+//            @Parameter(description = "Filter criteria") @Valid CityMasterCriteria criteria,
+//            @Parameter(description = "Pagination parameters") @PageableDefault(size = 20) Pageable pageable) {
+//        return ResponseEntity.ok(cityMasterService.getCities(criteria, pageable));
+//    }
+
+    @GetMapping
     public ResponseEntity<PagedResponse<CityMaster>> getCities(
             @Parameter(description = "Filter criteria") @Valid CityMasterCriteria criteria,
-            @Parameter(description = "Pagination parameters") @PageableDefault(size = 20) Pageable pageable) {
-        return ResponseEntity.ok(cityMasterService.getCities(criteria, pageable));
+            @Parameter(description = "Pagination parameters") @PageableDefault(size = 20) Pageable pageable){
+        return ResponseEntity.ok().body(cityMasterService.getCities(criteria, pageable));
     }
 }
