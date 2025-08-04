@@ -1,5 +1,6 @@
 package com.app.bloodbank.service;
 
+import com.app.bloodbank.config.EmailService;
 import com.app.bloodbank.exception.CustomException;
 import com.app.bloodbank.model.CityMaster;
 import com.app.bloodbank.model.CountryMaster;
@@ -7,6 +8,7 @@ import com.app.bloodbank.model.StateMaster;
 import com.app.bloodbank.repository.CityMasterRepository;
 import com.app.bloodbank.repository.CountryMasterRepository;
 import com.app.bloodbank.repository.StateMasterRepository;
+import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityNotFoundException;
 import org.apache.commons.lang3.StringUtils;
 import com.app.bloodbank.criteria.UserCriteria;
@@ -29,10 +31,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -63,6 +62,9 @@ public class UserService {
 
     @Autowired
     private UserDetailsService userDetailsService;
+    @Autowired
+    private EmailService emailService;
+
 
     public PagedResponse<Users> getUsers(UserCriteria criteria, Pageable pageable) {
         Page<Users> page = userQueryService.findByCriteria(criteria, pageable);
@@ -121,7 +123,26 @@ public class UserService {
             city = cityMasterRepository.findById(cityId).orElseThrow();
         }
 
-        return ResponseEntity.ok(userRepository.save(user));
+        try{
+            Map<String, Object> variables = new HashMap<>();
+            variables.put("subject", "Welcome to Our Platform");
+            variables.put("title", "Welcome to Our Platform");
+            variables.put("name", user.getFullName());
+            variables.put("username", user.getEmail());
+            variables.put("registrationDate", new Date());
+            variables.put("message", "Thank you for joining our community!");
+
+            emailService.sendTemplateEmail(
+                    user.getEmail(),
+                    "Welcome to Our Platform",
+                    "email/welcome-email", // Template path (without .html)
+                    variables
+            );
+            return ResponseEntity.ok(userRepository.save(user));
+
+        } catch (MessagingException e) {
+            throw new CustomException(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     public ResponseEntity<Map<String, Object>> login(String email, String password) {
@@ -136,6 +157,11 @@ public class UserService {
         UserDetails userDetails = userDetailsService.loadUserByUsername(email);
         String token = jwtService.generateToken(userDetails);
         Optional<Users> user = userRepository.findByEmail(email);
+
+
+        if(!user.get().getIsActive()){
+            throw new CustomException("User is not active, Enable to login", HttpStatus.BAD_REQUEST);
+        }
 
         return ResponseEntity.ok(Map.of(
                 "token", token,

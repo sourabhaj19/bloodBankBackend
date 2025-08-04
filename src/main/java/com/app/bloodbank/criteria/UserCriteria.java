@@ -27,6 +27,7 @@ public class UserCriteria implements Serializable {
     private DoubleFilter longitude;
     private LocalDateFilter lastDonationDate;
     private BooleanFilter isAvailable;
+    private BooleanFilter isActive;
 
     // Enum filtering
     private RoleFilter role;

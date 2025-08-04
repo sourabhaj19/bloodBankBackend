@@ -12,4 +12,6 @@ public interface StateMasterRepository extends JpaRepository<StateMaster, Long>,
 
     @Query(value = "select id from state where LOWER(name)= LOWER(:name) and LOWER(country_id) = LOWER(:countryId)", nativeQuery = true)
     Long findIdByNameIgnoreCaseAndCountryId(String name, Long countryId);
+
+    boolean existsByCountryId(Long id);
 }

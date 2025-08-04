@@ -18,4 +18,7 @@ public interface UserRepository extends JpaRepository<Users, Long> , JpaSpecific
 
     boolean existsByCountry(String countryName);
 
+    boolean existsByCity(String name);
+
+    boolean existsByState(String name);
 }

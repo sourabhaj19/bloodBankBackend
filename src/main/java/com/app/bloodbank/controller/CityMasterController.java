@@ -13,9 +13,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Validated
 @RestController
@@ -41,4 +42,19 @@ public class CityMasterController {
             @Parameter(description = "Pagination parameters") @PageableDefault(size = 20) Pageable pageable){
         return ResponseEntity.ok().body(cityMasterService.getCities(criteria, pageable));
     }
+
+    @PostMapping
+    public ResponseEntity<CityMaster> createCity(@Validated @RequestBody CityMaster citymaster){
+        return cityMasterService.createCity(citymaster);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Map<String, String>> deleteCity(@PathVariable("id") Long id) {
+        cityMasterService.deleteCity(id);
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "City Deleted Successfully!");
+
+        return ResponseEntity.ok(response);
+    }
+
 }

@@ -10,9 +10,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @Validated
@@ -30,5 +31,19 @@ public class StateMasterController {
             @Parameter(description = "Filter criteria") @Valid StateMasterCriteria criteria,
             @Parameter(description = "Pagination parameters") @PageableDefault(size = 20) Pageable pageable){
         return ResponseEntity.ok().body(stateMasterService.getAllStates(criteria, pageable));
+    }
+
+    @PostMapping
+    public ResponseEntity<StateMaster> createStates(@Validated @RequestBody StateMaster stateMaster){
+        return stateMasterService.createState(stateMaster);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Map<String, String>> deleteState(@PathVariable("id") Long id) {
+        stateMasterService.deleteState(id);
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "State Deleted Successfully!");
+
+        return ResponseEntity.ok(response);
     }
 }

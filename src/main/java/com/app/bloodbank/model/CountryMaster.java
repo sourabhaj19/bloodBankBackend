@@ -32,24 +32,8 @@ public class CountryMaster {
     @Column(nullable = false, unique = true, length = 10)
     private String code;
 
-    @OneToMany(mappedBy = "country", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private List<StateMaster> states;
-
     public CountryMaster(String name, String code) {
         this.name = name;
         this.code = code;
-    }
-
-    // Helper method to add state
-    public void addState(StateMaster state) {
-        states.add(state);
-        state.setCountry(this);
-    }
-
-    // Helper method to remove state
-    public void removeState(StateMaster state) {
-        states.remove(state);
-        state.setCountry(null);
     }
 }

@@ -10,4 +10,7 @@ import org.springframework.stereotype.Repository;
 public interface CityMasterRepository extends JpaRepository<CityMaster, Long>, JpaSpecificationExecutor<CityMaster>{
     @Query(value = "select id from city where LOWER(name)= LOWER(:name) and LOWER(state_id) = LOWER(:stateId)", nativeQuery = true)
     Long findIdByNameIgnoreCaseAndStateId(String name, Long stateId);
+
+
+    boolean existsByStateId(Long id);
 }

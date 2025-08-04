@@ -113,4 +113,7 @@ public class Users {
 
     @NotNull(message = "Availability status is required")
     private Boolean isAvailable;
+
+    @NotNull(message = "Active status is required")
+    private Boolean isActive;
 }

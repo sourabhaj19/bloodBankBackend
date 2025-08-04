@@ -66,6 +66,9 @@ public class UserQueryService extends QueryService<Users> {
             if (criteria.getIsAvailable() != null) {
                 specification = specification.and(buildSpecification(criteria.getIsAvailable(), Users_.isAvailable));
             }
+            if (criteria.getIsAvailable() != null) {
+                specification = specification.and(buildSpecification(criteria.getIsAvailable(), Users_.isActive));
+            }
             if (criteria.getLastDonationDate() != null) {
                 specification = specification.and(buildRangeSpecification(criteria.getLastDonationDate(), Users_.lastDonationDate));
             }
