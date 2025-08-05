@@ -1,6 +1,8 @@
 package com.app.bloodbank.service;
 
 import com.app.bloodbank.config.EmailService;
+import com.app.bloodbank.dto.ChangePasswordDTO;
+import com.app.bloodbank.dto.Response;
 import com.app.bloodbank.exception.CustomException;
 import com.app.bloodbank.model.CityMaster;
 import com.app.bloodbank.model.CountryMaster;
@@ -8,8 +10,10 @@ import com.app.bloodbank.model.StateMaster;
 import com.app.bloodbank.repository.CityMasterRepository;
 import com.app.bloodbank.repository.CountryMasterRepository;
 import com.app.bloodbank.repository.StateMasterRepository;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.apache.commons.lang3.StringUtils;
 import com.app.bloodbank.criteria.UserCriteria;
 import com.app.bloodbank.dto.PagedResponse;
@@ -173,5 +177,55 @@ public class UserService {
         return userRepository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @Transactional
+    public ResponseEntity<Response<String>> changePassword(ChangePasswordDTO payload) {
+        // Create response object
+        Response<String> response = new Response<>();
+
+        try {
+            // Input validation
+            if (payload.getNewPassword() == null || payload.getNewPassword().trim().isEmpty()) {
+                response.setSuccess(false);
+                response.setMessage("New password cannot be empty");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            Users user = userRepository.findById(payload.getUserId())
+                    .orElseThrow(() -> {
+                        response.setSuccess(false);
+                        response.setMessage("User not found");
+                        return new EntityNotFoundException("User not found");
+                    });
+
+            if (!passwordEncoder.matches(payload.getOldPassword(), user.getPassword())) {
+                response.setSuccess(false);
+                response.setMessage("Current password is incorrect");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            }
+
+            if (passwordEncoder.matches(payload.getNewPassword(), user.getPassword())) {
+                response.setSuccess(false);
+                response.setMessage("New password must be different from current password");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            // Update password
+            user.setPassword(passwordEncoder.encode(payload.getNewPassword()));
+            userRepository.save(user);
+
+            // Success response
+            response.setSuccess(true);
+            response.setMessage("Password changed successfully");
+            response.setData(null); // or you could return some user data if needed
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            // Log the exception
+            response.setSuccess(false);
+            response.setMessage("An error occurred while changing password");
+            return ResponseEntity.internalServerError().body(response);
+        }
     }
 }

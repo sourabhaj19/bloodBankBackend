@@ -2,6 +2,8 @@ package com.app.bloodbank.controller;
 
 import com.app.bloodbank.criteria.UserCriteria;
 import com.app.bloodbank.dto.PagedResponse;
+import com.app.bloodbank.dto.ChangePasswordDTO;
+import com.app.bloodbank.dto.Response;
 import com.app.bloodbank.exception.CustomException;
 import com.app.bloodbank.model.Users;
 import com.app.bloodbank.service.UserService;
@@ -9,8 +11,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -81,6 +81,11 @@ public class UserController {
         String email = loginRequest.get("email");
         String password = loginRequest.get("password");
         return userService.login(email, password);
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<Response<String>> changePassword(@RequestBody ChangePasswordDTO payload) {
+        return userService.changePassword(payload);
     }
 
     @GetMapping("/{id}")
