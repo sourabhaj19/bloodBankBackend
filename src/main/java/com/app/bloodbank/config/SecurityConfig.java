@@ -63,7 +63,7 @@ public class SecurityConfig {
                 .cors().and()
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/users/login", "/api/users/register", "/swagger-ui/**",
+                        .requestMatchers("/api/users/login","/api/auth/forgot-password", "/api/users/register", "/swagger-ui/**",
                                 "/v3/api-docs/**", "/swagger-resources/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()

@@ -45,4 +45,24 @@ public class EmailService {
 
         mailSender.send(message);
     }
+
+    public void sendOtpEmail(String to, String name, String otp) {
+        MimeMessage message = mailSender.createMimeMessage();
+
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            helper.setTo(to);
+            helper.setSubject("Password Reset OTP");
+
+            Context context = new Context();
+            context.setVariable("otp", otp);
+            context.setVariable("name", name);
+            String content = templateEngine.process("email/resetpasswordemail", context);
+
+            helper.setText(content, true);
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            throw new RuntimeException("Failed to send email", e);
+        }
+    }
 }
