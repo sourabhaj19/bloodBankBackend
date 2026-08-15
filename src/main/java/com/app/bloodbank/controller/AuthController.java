@@ -31,11 +31,11 @@ public class AuthController {
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity<?> resetPassword(@Valid @RequestBody ResetPasswordDto request) {
+    public ResponseEntity<?> resetPassword(@Valid @RequestBody ResetPasswordDto request) throws BadRequestException {
         // First verify OTP is valid
         VerifyOtpDto verifyOtpDto = new VerifyOtpDto();
         verifyOtpDto.setOtp(request.getOtp());
-        verifyOtpDto.setEmail(request.getEmail());
+        verifyOtpDto.setEmail(request.getOtp());
 
         authService.verifyOtp(verifyOtpDto);
 

@@ -2,6 +2,7 @@ package com.app.bloodbank.service;
 
 import com.app.bloodbank.config.EmailService;
 import com.app.bloodbank.dto.ChangePasswordDTO;
+import com.app.bloodbank.dto.NearbyDonorDTO;
 import com.app.bloodbank.dto.Response;
 import com.app.bloodbank.exception.CustomException;
 import com.app.bloodbank.model.CityMaster;
@@ -136,6 +137,7 @@ public class UserService {
             variables.put("registrationDate", new Date());
             variables.put("message", "Thank you for joining our community!");
 
+
             emailService.sendTemplateEmail(
                     user.getEmail(),
                     "Welcome to Our Platform",
@@ -149,7 +151,9 @@ public class UserService {
         }
     }
 
+
     public ResponseEntity<Map<String, Object>> login(String email, String password) {
+
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(email, password)
@@ -227,5 +231,56 @@ public class UserService {
             response.setMessage("An error occurred while changing password");
             return ResponseEntity.internalServerError().body(response);
         }
+    }
+
+    /**
+     * Find nearby donors within a radius (km). Default radius is 5 km and default limit is 50.
+     */
+    public List<NearbyDonorDTO> getNearbyDonors(Double lat, Double lng, Double radiusKm, Integer limit) {
+        if (lat == null || lng == null) {
+            throw new CustomException("Latitude and longitude are required", HttpStatus.BAD_REQUEST);
+        }
+        if (lat < -90 || lat > 90) {
+            throw new CustomException("Latitude must be between -90 and 90", HttpStatus.BAD_REQUEST);
+        }
+        if (lng < -180 || lng > 180) {
+            throw new CustomException("Longitude must be between -180 and 180", HttpStatus.BAD_REQUEST);
+        }
+        if (radiusKm == null) {
+            radiusKm = 5.0;
+        }
+        if (radiusKm <= 0 || radiusKm > 200) {
+            throw new CustomException("Radius must be > 0 and <= 200 km", HttpStatus.BAD_REQUEST);
+        }
+        if (limit == null) limit = 50;
+        if (limit <= 0 || limit > 500) {
+            throw new CustomException("Limit must be > 0 and <= 500", HttpStatus.BAD_REQUEST);
+        }
+
+        List<Object[]> rows = userRepository.findNearbyDonorsRaw(lat, lng, radiusKm);
+        List<NearbyDonorDTO> result = new ArrayList<>();
+        for (Object[] r : rows) {
+            if (r == null) continue;
+            Long id = r[0] != null ? ((Number) r[0]).longValue() : null;
+            String fullName = r[1] != null ? r[1].toString() : null;
+            String email = r[2] != null ? r[2].toString() : null;
+            String phone = r[3] != null ? r[3].toString() : null;
+            String phonePrefix = r[4] != null ? r[4].toString() : null;
+            Double latitude = r[5] != null ? ((Number) r[5]).doubleValue() : null;
+            Double longitude = r[6] != null ? ((Number) r[6]).doubleValue() : null;
+            String bloodGroup = r[7] != null ? r[7].toString() : null;
+            Double distanceKm = r[8] != null ? ((Number) r[8]).doubleValue() : null;
+
+            // round distance to 2 decimal places and set unit to km
+            Double roundedDistance = null;
+            if (distanceKm != null) {
+                roundedDistance = Math.round(distanceKm * 100.0) / 100.0;
+            }
+            NearbyDonorDTO dto = new NearbyDonorDTO(id, fullName, email, phone, phonePrefix, bloodGroup, latitude, longitude, roundedDistance, "km");
+            result.add(dto);
+            if (result.size() >= limit) break;
+        }
+
+        return result;
     }
 }

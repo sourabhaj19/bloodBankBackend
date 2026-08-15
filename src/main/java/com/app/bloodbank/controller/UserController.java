@@ -1,6 +1,7 @@
 package com.app.bloodbank.controller;
 
 import com.app.bloodbank.criteria.UserCriteria;
+import com.app.bloodbank.dto.NearbyDonorDTO;
 import com.app.bloodbank.dto.PagedResponse;
 import com.app.bloodbank.dto.ChangePasswordDTO;
 import com.app.bloodbank.dto.Response;
@@ -96,5 +97,16 @@ public class UserController {
     @GetMapping("/available-blood")
     public List<String> getAvailableBlood(){
         return userService.getAvailableBlood();
+    }
+
+    @GetMapping("/nearby")
+    public ResponseEntity<List<NearbyDonorDTO>> getNearbyDonors(
+            @RequestParam(name = "lat") Double lat,
+            @RequestParam(name = "lng") Double lng,
+            @RequestParam(name = "radiusKm", required = false, defaultValue = "5") Double radiusKm,
+            @RequestParam(name = "limit", required = false, defaultValue = "50") Integer limit
+    ) {
+        List<NearbyDonorDTO> donors = userService.getNearbyDonors(lat, lng, radiusKm, limit);
+        return ResponseEntity.ok(donors);
     }
 }

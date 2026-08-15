@@ -17,8 +17,8 @@ import java.time.LocalDate;
 @Table(name = "users")
 public class Users {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false, updatable = false)
     @JdbcTypeCode(SqlTypes.BIGINT)
     private Long id;
 
